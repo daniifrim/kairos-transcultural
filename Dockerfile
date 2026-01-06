@@ -7,8 +7,8 @@ COPY package.json package-lock.json* ./
 RUN npm ci
 
 # Copy environment variables (needed for build time)
+# .env.local must be committed for Docker build
 COPY .env.local .env.local
-COPY .env .env 2>/dev/null || true
 
 # Copy all source files
 COPY . .
