@@ -1,0 +1,87 @@
+'use client'
+
+import { useState } from 'react'
+import { Admin, Cohort, Participant } from '@/types/database'
+import { AdminHeader } from './AdminHeader'
+import { ParticipantsList } from './ParticipantsList'
+import { AddParticipantDialog } from './AddParticipantDialog'
+import { CohortSelector } from './CohortSelector'
+import { AdminManagement } from './AdminManagement'
+import { StatsCards } from './StatsCards'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
+interface AdminDashboardProps {
+  admin: Admin
+  activeCohort: Cohort | null
+  cohorts: Cohort[]
+  participants: Participant[]
+  allAdmins: Admin[]
+}
+
+export function AdminDashboard({
+  admin,
+  activeCohort,
+  cohorts,
+  participants,
+  allAdmins,
+}: AdminDashboardProps) {
+  const [selectedCohortId, setSelectedCohortId] = useState(activeCohort?.id || '')
+
+  const confirmedCount = participants.filter(p => p.status === 'confirmed').length
+  const expressedInterestCount = participants.filter(p => p.status === 'expressed_interest').length
+  const formCompletedCount = participants.filter(p => p.form_completed).length
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <AdminHeader admin={admin} />
+      
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Panou de Administrare</h1>
+            <p className="text-gray-600">Gestionează participanții și cohortele</p>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <CohortSelector
+              cohorts={cohorts}
+              selectedCohortId={selectedCohortId}
+              onSelect={setSelectedCohortId}
+              isMainAdmin={admin.is_main_admin}
+            />
+            <AddParticipantDialog
+              cohortId={selectedCohortId}
+              adminId={admin.id}
+            />
+          </div>
+        </div>
+
+        <StatsCards
+          confirmedCount={confirmedCount}
+          expressedInterestCount={expressedInterestCount}
+          formCompletedCount={formCompletedCount}
+          capacity={activeCohort?.capacity || 30}
+        />
+
+        <Tabs defaultValue="participants" className="mt-8">
+          <TabsList>
+            <TabsTrigger value="participants">Participanți</TabsTrigger>
+            {admin.is_main_admin && (
+              <TabsTrigger value="admins">Administratori</TabsTrigger>
+            )}
+          </TabsList>
+          
+          <TabsContent value="participants" className="mt-6">
+            <ParticipantsList participants={participants} />
+          </TabsContent>
+          
+          {admin.is_main_admin && (
+            <TabsContent value="admins" className="mt-6">
+              <AdminManagement admins={allAdmins} currentAdminId={admin.id} />
+            </TabsContent>
+          )}
+        </Tabs>
+      </main>
+    </div>
+  )
+}

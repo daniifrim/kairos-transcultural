@@ -1,0 +1,94 @@
+'use client'
+
+import { Button } from '@/components/ui/button'
+import { MessageCircle, Info } from 'lucide-react'
+import Link from 'next/link'
+
+interface HeroProps {
+  confirmedCount: number
+  capacity: number
+  isFull: boolean
+}
+
+export function Hero({ confirmedCount, capacity, isFull }: HeroProps) {
+  return (
+    <section id="hero" className="min-h-[80vh] flex flex-col lg:flex-row">
+      {/* Left Side - Content */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 bg-white">
+        <div className="max-w-xl w-full">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+            Kairos Transcultural 2026
+          </h1>
+          
+          <p className="text-lg md:text-xl text-gray-600 mb-8">
+            Două săptămâni în care poți{' '}
+            <span className="text-orange-600 font-semibold">
+              să descoperi Misiunea lui Dumnezeu pentru Biserica Sa
+            </span>{' '}
+            prin cursul Kairos și o experiență transculturală în triburile din Uganda.
+          </p>
+
+          {/* Counter */}
+          <div className="mb-8">
+            <div className="inline-block bg-orange-50 border-2 border-orange-200 rounded-lg px-6 py-3">
+              <p className="text-lg font-semibold text-gray-800">
+                Locuri ocupate:{' '}
+                <span className={`${isFull ? 'text-red-600' : 'text-orange-600'}`}>
+                  {confirmedCount}
+                </span>
+                <span className="text-gray-500"> / {capacity}</span>
+              </p>
+            </div>
+          </div>
+
+          {/* CTAs */}
+          {isFull ? (
+            <div className="bg-red-600 text-white px-8 py-4 rounded-lg inline-block">
+              <p className="text-xl font-bold">Locuri epuizate</p>
+              <p className="text-sm opacity-90">Toate locurile au fost ocupate</p>
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                size="lg"
+                className="bg-orange-600 hover:bg-orange-700 text-white"
+                asChild
+              >
+                <Link href="#signup">
+                  Înscrie-te acum
+                </Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-orange-600 text-orange-600 hover:bg-orange-50"
+                asChild
+              >
+                <a
+                  href="https://docs.google.com/document/d/1HEFN-WL13Zfssj022pHLFh-V_ogp6T0SWgFdlMthHw8/edit?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Info className="w-5 h-5 mr-2" />
+                  Mai multe informații
+                </a>
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Right Side - Image */}
+      <div className="w-full lg:w-1/2 relative min-h-[40vh] lg:min-h-full">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: 'url(/images/hero-boat.jpg)',
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-l from-black/30 via-transparent to-black/50" />
+        </div>
+      </div>
+    </section>
+  )
+}
