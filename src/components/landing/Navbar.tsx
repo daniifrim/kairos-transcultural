@@ -85,7 +85,7 @@ export function Navbar() {
               variant="ghost"
               size="icon"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={isScrolled ? 'text-gray-900' : 'text-white'}
+              className="text-gray-900"
             >
               {isMobileMenuOpen ? (
                 <X className="w-6 h-6" />

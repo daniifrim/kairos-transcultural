@@ -105,6 +105,7 @@ export default function AdminPage() {
       cohorts={cohorts}
       setCohorts={setCohorts}
       participants={participants}
+      setParticipants={setParticipants}
       allAdmins={allAdmins}
     />
   )

@@ -13,13 +13,25 @@ interface HeroProps {
 export function Hero({ confirmedCount, capacity, isFull }: HeroProps) {
   return (
     <section id="hero" className="min-h-[80vh] flex flex-col lg:flex-row">
-      {/* Left Side - Content */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 bg-white">
+      {/* Image - First on mobile (50vh), right side on desktop */}
+      <div className="w-full lg:w-1/2 relative h-[50vh] lg:h-auto lg:min-h-full order-first lg:order-last">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: 'url(/images/hero-boat.jpg)',
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30 lg:bg-gradient-to-l lg:from-black/30 lg:via-transparent lg:to-black/50" />
+        </div>
+      </div>
+
+      {/* Content - Second on mobile, left side on desktop */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 bg-white order-last lg:order-first">
         <div className="max-w-xl w-full">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
             Kairos Transcultural 2026
           </h1>
-          
+
           <p className="text-lg md:text-xl text-gray-600 mb-8">
             Două săptămâni în care poți{' '}
             <span className="text-orange-600 font-semibold">
@@ -75,18 +87,6 @@ export function Hero({ confirmedCount, capacity, isFull }: HeroProps) {
               </Button>
             </div>
           )}
-        </div>
-      </div>
-
-      {/* Right Side - Image */}
-      <div className="w-full lg:w-1/2 relative min-h-[40vh] lg:min-h-full">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url(/images/hero-boat.jpg)',
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-l from-black/30 via-transparent to-black/50" />
         </div>
       </div>
     </section>

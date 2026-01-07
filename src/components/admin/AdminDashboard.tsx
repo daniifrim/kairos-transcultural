@@ -16,6 +16,7 @@ interface AdminDashboardProps {
   cohorts: Cohort[]
   setCohorts: (cohorts: Cohort[]) => void
   participants: Participant[]
+  setParticipants: (participants: Participant[]) => void
   allAdmins: Admin[]
 }
 
@@ -25,6 +26,7 @@ export function AdminDashboard({
   cohorts,
   setCohorts,
   participants,
+  setParticipants,
   allAdmins,
 }: AdminDashboardProps) {
   const [selectedCohortId, setSelectedCohortId] = useState(activeCohort?.id || '')
@@ -78,7 +80,18 @@ export function AdminDashboard({
           </TabsList>
           
           <TabsContent value="participants" className="mt-6">
-            <ParticipantsList participants={cohortParticipants} />
+            <ParticipantsList 
+              participants={cohortParticipants}
+              onParticipantsChange={(updatedParticipants) => {
+                // Update the full participants list with the modified participant
+                setParticipants(
+                  participants.map(p => {
+                    const updated = updatedParticipants.find(up => up.id === p.id)
+                    return updated || p
+                  })
+                )
+              }}
+            />
           </TabsContent>
           
           {admin.is_main_admin && (

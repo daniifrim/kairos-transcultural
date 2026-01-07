@@ -26,7 +26,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { MoreHorizontal, Search, FileCheck, FileX, Download, Trash2 } from 'lucide-react'
 import { ParticipantDetailsDialog } from './ParticipantDetailsDialog'
@@ -44,6 +43,7 @@ import { toast } from 'sonner'
 
 interface ParticipantsListProps {
   participants: Participant[]
+  onParticipantsChange?: (participants: Participant[]) => void
 }
 
 const statusLabels: Record<ParticipantStatus, string> = {
@@ -58,7 +58,7 @@ const statusColors: Record<ParticipantStatus, string> = {
   denied: 'bg-red-100 text-red-800',
 }
 
-export function ParticipantsList({ participants }: ParticipantsListProps) {
+export function ParticipantsList({ participants, onParticipantsChange }: ParticipantsListProps) {
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
@@ -78,32 +78,44 @@ export function ParticipantsList({ participants }: ParticipantsListProps) {
   })
 
   const updateStatus = async (id: string, status: ParticipantStatus) => {
-    const supabase = createClient()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase.from('participants') as any).update({ status }).eq('id', id)
-    if (!error) {
+    const { updateParticipantStatus } = await import('@/lib/actions')
+    const result = await updateParticipantStatus(id, status)
+    
+    if (result.success) {
       toast.success('Status actualizat')
+      // Update local state immediately for instant feedback
+      const updatedParticipants = participants.map(p =>
+        p.id === id ? { ...p, status } : p
+      )
+      onParticipantsChange?.(updatedParticipants)
       router.refresh()
+    } else {
+      toast.error('Eroare la actualizarea statusului')
     }
   }
 
   const toggleFormCompleted = async (participant: Participant) => {
-    const supabase = createClient()
+    const { toggleParticipantFormCompleted } = await import('@/lib/actions')
     const newValue = !participant.form_completed
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase.from('participants') as any)
-      .update({ form_completed: newValue })
-      .eq('id', participant.id)
+    const result = await toggleParticipantFormCompleted(participant.id, newValue)
     
-    if (!error) {
+    if (result.success) {
       toast.success(newValue ? 'Formular marcat completat' : 'Formular marcat incomplet')
+      // Update local state immediately for instant feedback
+      const updatedParticipants = participants.map(p =>
+        p.id === participant.id ? { ...p, form_completed: newValue } : p
+      )
+      onParticipantsChange?.(updatedParticipants)
       router.refresh()
+    } else {
+      toast.error('Eroare la actualizarea formularului')
     }
   }
 
   const deleteParticipant = async () => {
     if (!participantToDelete) return
 
+    const { createClient } = await import('@/lib/supabase/client')
     const supabase = createClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await (supabase.from('participants') as any).delete().eq('id', participantToDelete.id)
@@ -112,6 +124,9 @@ export function ParticipantsList({ participants }: ParticipantsListProps) {
       toast.error('Eroare la ștergerea participantului')
     } else {
       toast.success('Participant șters cu succes')
+      // Update local state immediately for instant feedback
+      const updatedParticipants = participants.filter(p => p.id !== participantToDelete.id)
+      onParticipantsChange?.(updatedParticipants)
       router.refresh()
     }
 

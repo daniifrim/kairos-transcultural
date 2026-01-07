@@ -1,7 +1,8 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { Cohort } from '@/types/database'
+import { Cohort, ParticipantStatus } from '@/types/database'
+import { revalidatePath } from 'next/cache'
 
 export async function getActiveCohortStats() {
   const supabase = await createClient()
@@ -38,4 +39,42 @@ export async function getActiveCohortStats() {
     capacity: cohort.capacity,
     isFull,
   }
+}
+
+export async function updateParticipantStatus(participantId: string, status: ParticipantStatus) {
+  const supabase = await createClient()
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase.from('participants') as any)
+    .update({ status })
+    .eq('id', participantId)
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+
+  // Revalidate both admin and home pages to update counters
+  revalidatePath('/admin')
+  revalidatePath('/')
+
+  return { success: true }
+}
+
+export async function toggleParticipantFormCompleted(participantId: string, formCompleted: boolean) {
+  const supabase = await createClient()
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase.from('participants') as any)
+    .update({ form_completed: formCompleted })
+    .eq('id', participantId)
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+
+  // Revalidate both admin and home pages
+  revalidatePath('/admin')
+  revalidatePath('/')
+
+  return { success: true }
 }
