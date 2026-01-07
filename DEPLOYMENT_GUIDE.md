@@ -153,7 +153,13 @@ OPENROUTER_API_KEY=sk-or-v1-672eaf1dde558d83734085b097b9995d2f746f5ff35ecc18384d
 
 ## Troubleshooting
 
-### Application Not Loading
+**⚠️ IMPORTANT:** For detailed troubleshooting of common deployment issues, see [DEPLOYMENT_TROUBLESHOOTING.md](./DEPLOYMENT_TROUBLESHOOTING.md). This guide includes:
+- Environment variable configuration issues
+- TypeScript compilation errors
+- Docker build problems
+- Domain and routing configuration
+
+### Quick Checks
 
 ```bash
 # Check container status
@@ -165,6 +171,22 @@ docker logs <container-id> --tail 100
 # Restart the service
 docker service update --force kairos-transcultural
 ```
+
+**Common causes:**
+- Domain not configured in Dokploy (see DEPLOYMENT_TROUBLESHOOTING.md Issue 4)
+- Container not running
+- Wrong port configured
+- Nginx misconfiguration
+
+### Application Shows 404 Error
+
+This is likely because the domain wasn't configured in Dokploy UI.
+
+**Solution:**
+1. Go to Dokploy dashboard
+2. Navigate to your application
+3. Add the domain in the application settings
+4. Dokploy will automatically configure Traefik routing
 
 ### SSL Certificate Errors
 
@@ -194,12 +216,23 @@ cat /etc/dokploy/traefik/dynamic/kairos-transcultural.yml
 ```bash
 # Check build logs in Dokploy UI
 # Common issues:
-# - Missing .env.local file
+# - TypeScript compilation errors (see DEPLOYMENT_TROUBLESHOOTING.md Issue 2)
+# - Missing .env.production file (see DEPLOYMENT_TROUBLESHOOTING.md Issue 1)
+# - Missing standalone output (see DEPLOYMENT_TROUBLESHOOTING.md Issue 3)
 # - Node modules not installing
 # - Build timeout (increase in Dokploy settings)
 
-# Solution: Check Dockerfile build stage
-docker build -t kairos-test .
+# Solution: Always run 'npm run build' locally before pushing
+npm run build
+```
+
+**Before deploying, ALWAYS test locally:**
+```bash
+# This will catch most deployment issues
+npm run build
+
+# Verify standalone output exists
+ls -la .next/standalone
 ```
 
 ---
