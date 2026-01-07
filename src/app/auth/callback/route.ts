@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { Database } from '@/types/database'
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
@@ -21,12 +22,13 @@ export async function GET(request: Request) {
       if (!existingAdmin) {
         // Create new admin record (pending approval)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (supabase.from('admins') as any).insert({
-          email: user.email,
-          name: user.user_metadata?.full_name || user.email,
-          is_approved: false,
-          is_main_admin: false,
-        })
+        await (supabase.from('admins') as any)
+          .insert({
+            email: user.email,
+            name: user.user_metadata?.full_name || user.email,
+            is_approved: false,
+            is_main_admin: false,
+          })
       }
 
       // Check if approved

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
+import { Database } from '@/types/database'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -153,14 +154,14 @@ export async function POST(request: Request) {
       // Create new participant record (unmatched submission)
       const { data: newParticipant } = await supabase
         .from('participants')
-        .insert({
+        .insert<Database['public']['Tables']['participants']['Insert']>({
           cohort_id: activeCohort.id,
           name: tallyData.name,
           contact: tallyData.email || tallyData.phone,
           status: 'expressed_interest',
           form_completed: true,
           tally_data: tallyData,
-          added_by: null,
+          added_by: 'tally-webhook', // Special marker for webhook submissions
         })
         .select()
         .single()

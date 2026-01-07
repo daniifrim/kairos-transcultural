@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
+import { Database } from '@/types/database'
 
 interface AddParticipantDialogProps {
   cohortId: string
@@ -30,15 +31,16 @@ export function AddParticipantDialog({ cohortId, adminId }: AddParticipantDialog
     const supabase = createClient()
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase.from('participants') as any).insert({
-      cohort_id: cohortId,
-      name: name.trim(),
-      contact: contact.trim(),
-      status: 'expressed_interest',
-      form_completed: false,
-      tally_data: null,
-      added_by: adminId,
-    })
+    const { error } = await (supabase.from('participants') as any)
+      .insert({
+        cohort_id: cohortId,
+        name: name.trim(),
+        contact: contact.trim(),
+        status: 'expressed_interest',
+        form_completed: false,
+        tally_data: null,
+        added_by: adminId,
+      })
 
     setLoading(false)
 

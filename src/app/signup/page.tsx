@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { Database } from '@/types/database'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -42,8 +43,8 @@ export default function SignupPage() {
     }
 
     // Create admin record
-    const { error: adminError } = await supabase
-      .from('admins')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: adminError } = await (supabase.from('admins') as any)
       .insert({
         id: authData.user.id,
         email,

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Cohort } from '@/types/database'
+import { Cohort, Database } from '@/types/database'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
@@ -55,11 +55,15 @@ export function CohortSelector({ cohorts, selectedCohortId, onSelect, onCohortsC
     setLoading(true)
     const supabase = createClient()
 
-    // Deactivate all cohorts
-    await supabase.from('cohorts').update({ is_active: false })
+    // Deactivate the currently active cohort (if any)
+    const currentlyActive = cohorts.find(c => c.is_active)
+    if (currentlyActive) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.from('cohorts') as any).update({ is_active: false }).eq('id', currentlyActive.id)
+    }
 
-    const { data, error } = await supabase
-      .from('cohorts')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase.from('cohorts') as any)
       .insert({ name: newCohortName.trim(), is_active: true, capacity: 30 })
       .select()
       .single()
@@ -92,8 +96,8 @@ export function CohortSelector({ cohorts, selectedCohortId, onSelect, onCohortsC
     setLoading(true)
     const supabase = createClient()
 
-    const { error } = await supabase
-      .from('cohorts')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase.from('cohorts') as any)
       .update({
         name: editCohortName.trim(),
         capacity: parseInt(editCohortCapacity) || 30
@@ -124,8 +128,8 @@ export function CohortSelector({ cohorts, selectedCohortId, onSelect, onCohortsC
     setLoading(true)
     const supabase = createClient()
 
-    const { error } = await supabase
-      .from('cohorts')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase.from('cohorts') as any)
       .delete()
       .eq('id', cohortToDelete.id)
 
@@ -152,10 +156,21 @@ export function CohortSelector({ cohorts, selectedCohortId, onSelect, onCohortsC
 
   const setActiveCohort = async (cohortId: string) => {
     const supabase = createClient()
-    // Deactivate all cohorts
-    await supabase.from('cohorts').update({ is_active: false })
-    // Activate selected cohort
-    await supabase.from('cohorts').update({ is_active: true }).eq('id', cohortId)
+
+    // First, deactivate the currently active cohort (if any)
+    const currentlyActive = cohorts.find(c => c.is_active)
+    if (currentlyActive && currentlyActive.id !== cohortId) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.from('cohorts') as any).update({ is_active: false }).eq('id', currentlyActive.id)
+    }
+
+    // Then activate the selected cohort
+    const selected = cohorts.find(c => c.id === cohortId)
+    if (selected && !selected.is_active) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.from('cohorts') as any).update({ is_active: true }).eq('id', cohortId)
+    }
+
     onSelect(cohortId)
     await refreshCohorts()
     toast.success('Cohortă activă schimbată')
