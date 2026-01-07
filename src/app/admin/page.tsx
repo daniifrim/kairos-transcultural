@@ -1,58 +1,110 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { AdminDashboard } from '@/components/admin/AdminDashboard'
 import { Admin, Cohort, Participant } from '@/types/database'
+import { createClient } from '@/lib/supabase/client'
+import { Loader2 } from 'lucide-react'
 
-export default async function AdminPage() {
-  const supabase = await createClient()
-  
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user || !user.email) redirect('/login')
+export default function AdminPage() {
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [admin, setAdmin] = useState<Admin | null>(null)
+  const [activeCohort, setActiveCohort] = useState<Cohort | null>(null)
+  const [cohorts, setCohorts] = useState<Cohort[]>([])
+  const [participants, setParticipants] = useState<Participant[]>([])
+  const [allAdmins, setAllAdmins] = useState<Admin[]>([])
 
-  // Get admin info
-  const { data: admin } = await supabase
-    .from('admins')
-    .select('*')
-    .eq('email', user.email)
-    .single() as { data: Admin | null }
+  useEffect(() => {
+    async function loadAdminData() {
+      try {
+        const supabase = createClient()
 
-  if (!admin?.is_approved) {
-    redirect('/pending-approval')
+        // Check auth
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user || !user.email) {
+          router.push('/login')
+          return
+        }
+
+        // Get admin info
+        const { data: adminData } = await supabase
+          .from('admins')
+          .select('*')
+          .eq('email', user.email)
+          .single()
+
+        if (!adminData?.is_approved) {
+          router.push('/pending-approval')
+          return
+        }
+
+        setAdmin(adminData as Admin)
+
+        // Get active cohort
+        const { data: activeCohortData } = await supabase
+          .from('cohorts')
+          .select('*')
+          .eq('is_active', true)
+          .single()
+
+        setActiveCohort(activeCohortData as Cohort | null)
+
+        // Get all cohorts
+        const { data: cohortsData } = await supabase
+          .from('cohorts')
+          .select('*')
+          .order('created_at', { ascending: false })
+
+        setCohorts(cohortsData || [])
+
+        // Get ALL participants (dashboard will filter by selected cohort)
+        const { data: participantsData } = await supabase
+          .from('participants')
+          .select('*')
+          .order('created_at', { ascending: false })
+
+        setParticipants(participantsData || [])
+
+        // Get all admins (for main admin)
+        if (adminData.is_main_admin) {
+          const { data: adminsData } = await supabase
+            .from('admins')
+            .select('*')
+            .order('created_at', { ascending: false })
+
+          setAllAdmins(adminsData || [])
+        }
+      } catch (error) {
+        console.error('Error loading admin data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadAdminData()
+  }, [router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-500" />
+      </div>
+    )
   }
 
-  // Get active cohort
-  const { data: activeCohort } = await supabase
-    .from('cohorts')
-    .select('*')
-    .eq('is_active', true)
-    .single() as { data: Cohort | null }
-
-  // Get all cohorts
-  const { data: cohorts } = await supabase
-    .from('cohorts')
-    .select('*')
-    .order('created_at', { ascending: false }) as { data: Cohort[] | null }
-
-  // Get participants for active cohort
-  const { data: participants } = await supabase
-    .from('participants')
-    .select('*')
-    .eq('cohort_id', activeCohort?.id || '')
-    .order('created_at', { ascending: false }) as { data: Participant[] | null }
-
-  // Get all admins (for main admin)
-  let allAdmins: Admin[] = []
-  if (admin.is_main_admin) {
-    const result = await supabase.from('admins').select('*').order('created_at', { ascending: false }) as { data: Admin[] | null }
-    allAdmins = result.data || []
+  if (!admin) {
+    return null
   }
 
   return (
     <AdminDashboard
       admin={admin}
       activeCohort={activeCohort}
-      cohorts={cohorts || []}
-      participants={participants || []}
+      cohorts={cohorts}
+      setCohorts={setCohorts}
+      participants={participants}
       allAdmins={allAdmins}
     />
   )

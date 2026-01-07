@@ -14,6 +14,7 @@ interface AdminDashboardProps {
   admin: Admin
   activeCohort: Cohort | null
   cohorts: Cohort[]
+  setCohorts: (cohorts: Cohort[]) => void
   participants: Participant[]
   allAdmins: Admin[]
 }
@@ -22,14 +23,18 @@ export function AdminDashboard({
   admin,
   activeCohort,
   cohorts,
+  setCohorts,
   participants,
   allAdmins,
 }: AdminDashboardProps) {
   const [selectedCohortId, setSelectedCohortId] = useState(activeCohort?.id || '')
 
-  const confirmedCount = participants.filter(p => p.status === 'confirmed').length
-  const expressedInterestCount = participants.filter(p => p.status === 'expressed_interest').length
-  const formCompletedCount = participants.filter(p => p.form_completed).length
+  // Filter participants by selected cohort
+  const cohortParticipants = participants.filter(p => p.cohort_id === selectedCohortId)
+
+  const confirmedCount = cohortParticipants.filter(p => p.status === 'confirmed').length
+  const expressedInterestCount = cohortParticipants.filter(p => p.status === 'expressed_interest').length
+  const formCompletedCount = cohortParticipants.filter(p => p.form_completed).length
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -47,6 +52,7 @@ export function AdminDashboard({
               cohorts={cohorts}
               selectedCohortId={selectedCohortId}
               onSelect={setSelectedCohortId}
+              onCohortsChange={setCohorts}
               isMainAdmin={admin.is_main_admin}
             />
             <AddParticipantDialog
@@ -60,7 +66,7 @@ export function AdminDashboard({
           confirmedCount={confirmedCount}
           expressedInterestCount={expressedInterestCount}
           formCompletedCount={formCompletedCount}
-          capacity={activeCohort?.capacity || 30}
+          capacity={cohorts.find(c => c.id === selectedCohortId)?.capacity || 30}
         />
 
         <Tabs defaultValue="participants" className="mt-8">
@@ -72,7 +78,7 @@ export function AdminDashboard({
           </TabsList>
           
           <TabsContent value="participants" className="mt-6">
-            <ParticipantsList participants={participants} />
+            <ParticipantsList participants={cohortParticipants} />
           </TabsContent>
           
           {admin.is_main_admin && (

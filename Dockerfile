@@ -6,12 +6,7 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
 
-# Copy environment variables (needed for build time)
-# Priority: .env.production > .env.local > .env
-COPY .env.production .env.production
-COPY .env.local .env.local 2>/dev/null || true
-
-# Copy all source files
+# Copy all source files (including optional .env files if they exist)
 COPY . .
 
 # Build the application
