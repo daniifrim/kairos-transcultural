@@ -39,14 +39,14 @@ export function AdminDashboard({
   const formCompletedCount = cohortParticipants.filter(p => p.form_completed).length
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <AdminHeader admin={admin} />
       
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Panou de Administrare</h1>
-            <p className="text-gray-600">Gestionează participanții și cohortele</p>
+            <h1 className="text-2xl font-bold text-foreground">Panou de Administrare</h1>
+            <p className="text-muted-foreground">Gestionează participanții și cohortele</p>
           </div>
           
           <div className="flex items-center gap-4">

@@ -28,13 +28,13 @@ export function Hero({ confirmedCount, capacity, isFull }: HeroProps) {
       {/* Content - Second on mobile, left side on desktop */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 bg-white order-last lg:order-first">
         <div className="max-w-xl w-full">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
             Kairos Transcultural 2026
           </h1>
 
-          <p className="text-lg md:text-xl text-gray-600 mb-8">
+          <p className="text-lg md:text-xl text-muted-foreground mb-8">
             Două săptămâni în care poți{' '}
-            <span className="text-orange-600 font-semibold">
+            <span className="text-primary font-semibold">
               să descoperi Misiunea lui Dumnezeu pentru Biserica Sa
             </span>{' '}
             prin cursul Kairos și o experiență transculturală în triburile din Uganda.
@@ -42,20 +42,20 @@ export function Hero({ confirmedCount, capacity, isFull }: HeroProps) {
 
           {/* Counter */}
           <div className="mb-8">
-            <div className="inline-block bg-orange-50 border-2 border-orange-200 rounded-lg px-6 py-3">
-              <p className="text-lg font-semibold text-gray-800">
+            <div className="inline-block bg-primary/10 border-2 border-primary/30 rounded-lg px-6 py-3">
+              <p className="text-lg font-semibold text-foreground">
                 Locuri ocupate:{' '}
-                <span className={`${isFull ? 'text-red-600' : 'text-orange-600'}`}>
+                <span className={`${isFull ? 'text-destructive' : 'text-primary'}`}>
                   {confirmedCount}
                 </span>
-                <span className="text-gray-500"> / {capacity}</span>
+                <span className="text-muted-foreground"> / {capacity}</span>
               </p>
             </div>
           </div>
 
           {/* CTAs */}
           {isFull ? (
-            <div className="bg-red-600 text-white px-8 py-4 rounded-lg inline-block">
+            <div className="bg-destructive text-white px-8 py-4 rounded-lg inline-block">
               <p className="text-xl font-bold">Locuri epuizate</p>
               <p className="text-sm opacity-90">Toate locurile au fost ocupate</p>
             </div>
@@ -63,7 +63,6 @@ export function Hero({ confirmedCount, capacity, isFull }: HeroProps) {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
                 size="lg"
-                className="bg-orange-600 hover:bg-orange-700 text-white"
                 asChild
               >
                 <Link href="#signup">
@@ -73,7 +72,7 @@ export function Hero({ confirmedCount, capacity, isFull }: HeroProps) {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-orange-600 text-orange-600 hover:bg-orange-50"
+                className="border-primary text-primary hover:bg-primary/10"
                 asChild
               >
                 <a

@@ -112,15 +112,13 @@ export function ParticipantsList({ participants, onParticipantsChange }: Partici
     }
   }
 
-  const deleteParticipant = async () => {
+  const handleDeleteParticipant = async () => {
     if (!participantToDelete) return
 
-    const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase.from('participants') as any).delete().eq('id', participantToDelete.id)
+    const { deleteParticipant } = await import('@/lib/actions')
+    const result = await deleteParticipant(participantToDelete.id)
 
-    if (error) {
+    if (!result.success) {
       toast.error('Eroare la ștergerea participantului')
     } else {
       toast.success('Participant șters cu succes')
@@ -162,7 +160,7 @@ export function ParticipantsList({ participants, onParticipantsChange }: Partici
       <div className="p-4 border-b">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Caută după nume sau contact..."
               value={search}
@@ -212,7 +210,7 @@ export function ParticipantsList({ participants, onParticipantsChange }: Partici
         <TableBody>
           {filteredParticipants.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+              <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                 Nu s-au găsit participanți
               </TableCell>
             </TableRow>
@@ -244,11 +242,11 @@ export function ParticipantsList({ participants, onParticipantsChange }: Partici
                     {participant.form_completed ? (
                       <FileCheck className="h-5 w-5 text-green-600" />
                     ) : (
-                      <FileX className="h-5 w-5 text-gray-400" />
+                      <FileX className="h-5 w-5 text-muted-foreground" />
                     )}
                   </button>
                 </TableCell>
-                <TableCell className="text-gray-500">
+                <TableCell className="text-muted-foreground">
                   {new Date(participant.created_at).toLocaleDateString('ro-RO')}
                 </TableCell>
                 <TableCell>
@@ -293,7 +291,7 @@ export function ParticipantsList({ participants, onParticipantsChange }: Partici
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Anulează</AlertDialogCancel>
-            <AlertDialogAction onClick={deleteParticipant} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction onClick={handleDeleteParticipant} className="bg-red-600 hover:bg-red-700">
               Șterge
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -16,11 +16,11 @@ export default function PendingApprovalPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center mb-4">
-            <Clock className="w-6 h-6 text-orange-600" />
+          <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+            <Clock className="w-6 h-6 text-primary" />
           </div>
           <CardTitle className="text-2xl">În așteptare</CardTitle>
           <CardDescription>
@@ -28,7 +28,7 @@ export default function PendingApprovalPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center">
-          <p className="text-sm text-gray-600 mb-6">
+          <p className="text-sm text-muted-foreground mb-6">
             Vei primi acces după ce un administrator îți aprobă contul. 
             Te rugăm să revii mai târziu sau să contactezi administratorul.
           </p>

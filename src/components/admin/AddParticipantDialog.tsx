@@ -5,11 +5,10 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createClient } from '@/lib/supabase/client'
+import { addParticipant } from '@/lib/actions'
 import { useRouter } from 'next/navigation'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
-import { Database } from '@/types/database'
 
 interface AddParticipantDialogProps {
   cohortId: string
@@ -28,23 +27,10 @@ export function AddParticipantDialog({ cohortId, adminId }: AddParticipantDialog
     if (!name.trim() || !contact.trim()) return
 
     setLoading(true)
-    const supabase = createClient()
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase.from('participants') as any)
-      .insert({
-        cohort_id: cohortId,
-        name: name.trim(),
-        contact: contact.trim(),
-        status: 'expressed_interest',
-        form_completed: false,
-        tally_data: null,
-        added_by: adminId,
-      })
-
+    const result = await addParticipant(cohortId, name, contact, adminId)
     setLoading(false)
 
-    if (error) {
+    if (!result.success) {
       toast.error('Eroare la adăugarea participantului')
       return
     }

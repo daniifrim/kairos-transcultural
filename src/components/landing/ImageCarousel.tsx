@@ -60,11 +60,14 @@ export function ImageCarousel() {
   return (
     <section id="gallery" className="py-16 px-4 bg-white">
       <div className="max-w-5xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 text-gray-900">
+        <p className="text-sm font-semibold text-primary uppercase tracking-wider text-center mb-2">
+          Galerie
+        </p>
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 text-foreground">
           Imagini din edițiile anterioare
         </h2>
-        <p className="text-gray-600 text-center mb-10">
-          Imagini din Kairos Transcultural 2023, 2024, 2025 și 2026
+        <p className="text-muted-foreground text-center mb-10">
+          Imagini din Kairos Transcultural 2023, 2024 și 2025
         </p>
 
         <div className="relative">
@@ -110,7 +113,7 @@ export function ImageCarousel() {
               <button
                 key={index}
                 className={`w-2 h-2 rounded-full transition-colors ${
-                  index === selectedIndex ? 'bg-primary' : 'bg-gray-300'
+                  index === selectedIndex ? 'bg-primary' : 'bg-muted-foreground/30'
                 }`}
                 onClick={() => emblaApi?.scrollTo(index)}
               />

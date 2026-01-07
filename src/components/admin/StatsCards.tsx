@@ -54,7 +54,7 @@ export function StatsCards({
       {stats.map((stat) => (
         <Card key={stat.title}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               {stat.title}
             </CardTitle>
             <div className={`p-2 rounded-lg ${stat.bgColor}`}>
@@ -63,7 +63,7 @@ export function StatsCards({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stat.value}</div>
-            <p className="text-xs text-gray-500">{stat.subtitle}</p>
+            <p className="text-xs text-muted-foreground">{stat.subtitle}</p>
           </CardContent>
         </Card>
       ))}

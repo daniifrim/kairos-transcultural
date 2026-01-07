@@ -27,14 +27,14 @@ export function Impact() {
   return (
     <section id="impact" className="py-16 px-4 bg-white">
       <div className="max-w-6xl mx-auto text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-          Impactul cursului Kairos
-        </h2>
-        <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-8">
+        <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-2">
           Alinează-ți viața cu Dumnezeu și misiunea Sa
         </p>
+        <h2 className="text-3xl md:text-4xl font-bold mb-8 text-foreground">
+          Impactul cursului Kairos
+        </h2>
         
-        <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">
+        <p className="text-lg text-muted-foreground mb-12 max-w-3xl mx-auto">
           Kairos este un curs interactiv ce cuprinde{' '}
           <strong>nouă sesiuni despre misiunea creștină mondială și locală</strong>. 
           Este conceput pentru a educa, inspira și provoca creștinii la o participare 
@@ -57,13 +57,13 @@ export function Impact() {
           {impacts.map((item) => (
             <div
               key={item.title}
-              className="p-6 rounded-xl bg-gray-50 hover:bg-primary/5 transition-colors"
+              className="p-6 rounded-xl border border-border/60 bg-muted/50 hover:border-primary/30 hover:bg-primary/5 transition-colors"
             >
               <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
                 <item.icon className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">{item.title}</h3>
-              <p className="text-sm text-gray-600">{item.description}</p>
+              <h3 className="font-semibold text-foreground mb-2">{item.title}</h3>
+              <p className="text-sm text-muted-foreground">{item.description}</p>
             </div>
           ))}
         </div>

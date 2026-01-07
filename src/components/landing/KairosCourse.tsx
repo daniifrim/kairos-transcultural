@@ -33,10 +33,10 @@ export function KairosCourse() {
             <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-2">
               Teoria
             </p>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">
               Cursul Kairos
             </h2>
-            <p className="text-lg text-gray-600 mb-8">
+            <p className="text-lg text-muted-foreground mb-8">
               Concentrându-se pe dimensiunea{' '}
               <strong>biblică</strong>, <strong>istorică</strong>,{' '}
               <strong>strategică</strong> și <strong>culturală</strong>{' '}
@@ -47,15 +47,15 @@ export function KairosCourse() {
               {dimensions.map((dim) => (
                 <div
                   key={dim.title}
-                  className="flex items-start gap-3 p-4 rounded-lg bg-gray-50"
+                  className="p-4 rounded-lg border border-border/60 bg-muted/50"
                 >
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <dim.icon className="w-5 h-5 text-primary" />
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <dim.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-foreground">{dim.title}</h3>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{dim.title}</h3>
-                    <p className="text-sm text-gray-600">{dim.description}</p>
-                  </div>
+                  <p className="text-sm text-muted-foreground">{dim.description}</p>
                 </div>
               ))}
             </div>

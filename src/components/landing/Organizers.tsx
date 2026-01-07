@@ -29,10 +29,10 @@ export function Organizers() {
           <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-2">
             Contact
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
             Organizatorii principali
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             Ia legătura cu persoanele cheie pentru a-ți exprima interesul pentru curs și călătoria în Uganda.
           </p>
         </div>
@@ -41,10 +41,10 @@ export function Organizers() {
           {organizers.map((person) => (
             <div
               key={person.name}
-              className="bg-gray-50 rounded-xl border border-gray-100 shadow-sm p-6 flex flex-col md:flex-row gap-6"
+              className="rounded-xl border border-border/60 shadow-sm p-6 flex flex-col md:flex-row gap-6 bg-muted/50"
             >
               <div className="md:w-1/3">
-                <div className="aspect-square overflow-hidden rounded-lg bg-gray-200">
+                <div className="aspect-square overflow-hidden rounded-lg bg-muted">
                   <img
                     src={person.image}
                     alt={`Portret ${person.name}`}
@@ -55,9 +55,9 @@ export function Organizers() {
 
               <div className="flex-1 flex flex-col justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900">{person.name}</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{person.name}</h3>
                   <p className="text-sm text-primary font-medium mt-1">{person.title}</p>
-                  <p className="text-gray-600 mt-3">{person.description}</p>
+                  <p className="text-muted-foreground mt-3">{person.description}</p>
                 </div>
 
                 <div>

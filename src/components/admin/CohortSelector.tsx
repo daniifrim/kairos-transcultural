@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { Cohort, Database } from '@/types/database'
+import { Cohort } from '@/types/database'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createClient } from '@/lib/supabase/client'
+import { createCohort, updateCohort, deleteCohort, setActiveCohort } from '@/lib/actions'
+import { useRouter } from 'next/navigation'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -30,14 +31,7 @@ interface CohortSelectorProps {
 }
 
 export function CohortSelector({ cohorts, selectedCohortId, onSelect, onCohortsChange, isMainAdmin }: CohortSelectorProps) {
-  const refreshCohorts = async () => {
-    const supabase = createClient()
-    const { data } = await supabase
-      .from('cohorts')
-      .select('*')
-      .order('created_at', { ascending: false })
-    if (data) onCohortsChange(data)
-  }
+  const router = useRouter()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -53,24 +47,10 @@ export function CohortSelector({ cohorts, selectedCohortId, onSelect, onCohortsC
     if (!newCohortName.trim()) return
 
     setLoading(true)
-    const supabase = createClient()
-
-    // Deactivate the currently active cohort (if any)
-    const currentlyActive = cohorts.find(c => c.is_active)
-    if (currentlyActive) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.from('cohorts') as any).update({ is_active: false }).eq('id', currentlyActive.id)
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase.from('cohorts') as any)
-      .insert({ name: newCohortName.trim(), is_active: true, capacity: 30 })
-      .select()
-      .single()
-
+    const result = await createCohort(newCohortName)
     setLoading(false)
 
-    if (error) {
+    if (!result.success) {
       toast.error('Eroare la crearea cohortei')
       return
     }
@@ -78,8 +58,10 @@ export function CohortSelector({ cohorts, selectedCohortId, onSelect, onCohortsC
     toast.success('Cohortă creată cu succes')
     setNewCohortName('')
     setDialogOpen(false)
-    onSelect(data.id)
-    await refreshCohorts()
+    if (result.data) {
+      onSelect(result.data.id)
+    }
+    router.refresh()
   }
 
   const openEditDialog = (cohort: Cohort) => {
@@ -94,19 +76,10 @@ export function CohortSelector({ cohorts, selectedCohortId, onSelect, onCohortsC
     if (!cohortToEdit || !editCohortName.trim()) return
 
     setLoading(true)
-    const supabase = createClient()
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase.from('cohorts') as any)
-      .update({
-        name: editCohortName.trim(),
-        capacity: parseInt(editCohortCapacity) || 30
-      })
-      .eq('id', cohortToEdit.id)
-
+    const result = await updateCohort(cohortToEdit.id, editCohortName, parseInt(editCohortCapacity) || 30)
     setLoading(false)
 
-    if (error) {
+    if (!result.success) {
       toast.error('Eroare la actualizarea cohortei')
       return
     }
@@ -114,7 +87,7 @@ export function CohortSelector({ cohorts, selectedCohortId, onSelect, onCohortsC
     toast.success('Cohortă actualizată cu succes')
     setEditDialogOpen(false)
     setCohortToEdit(null)
-    await refreshCohorts()
+    router.refresh()
   }
 
   const confirmDeleteCohort = (cohort: Cohort) => {
@@ -126,25 +99,17 @@ export function CohortSelector({ cohorts, selectedCohortId, onSelect, onCohortsC
     if (!cohortToDelete) return
 
     setLoading(true)
-    const supabase = createClient()
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase.from('cohorts') as any)
-      .delete()
-      .eq('id', cohortToDelete.id)
-
+    const result = await deleteCohort(cohortToDelete.id)
     setLoading(false)
 
-    if (error) {
+    if (!result.success) {
       toast.error('Eroare la ștergerea cohortei')
       return
     }
 
     toast.success('Cohortă ștearsă cu succes')
     setDeleteDialogOpen(false)
-    setCohortToDelete(null)
-    await refreshCohorts()
-    
+
     // If the deleted cohort was selected, select the first available cohort
     if (selectedCohortId === cohortToDelete.id) {
       const remainingCohorts = cohorts.filter(c => c.id !== cohortToDelete.id)
@@ -152,33 +117,27 @@ export function CohortSelector({ cohorts, selectedCohortId, onSelect, onCohortsC
         onSelect(remainingCohorts[0].id)
       }
     }
+
+    setCohortToDelete(null)
+    router.refresh()
   }
 
-  const setActiveCohort = async (cohortId: string) => {
-    const supabase = createClient()
+  const handleSetActiveCohort = async (cohortId: string) => {
+    const result = await setActiveCohort(cohortId)
 
-    // First, deactivate the currently active cohort (if any)
-    const currentlyActive = cohorts.find(c => c.is_active)
-    if (currentlyActive && currentlyActive.id !== cohortId) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.from('cohorts') as any).update({ is_active: false }).eq('id', currentlyActive.id)
-    }
-
-    // Then activate the selected cohort
-    const selected = cohorts.find(c => c.id === cohortId)
-    if (selected && !selected.is_active) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.from('cohorts') as any).update({ is_active: true }).eq('id', cohortId)
+    if (!result.success) {
+      toast.error('Eroare la schimbarea cohortei active')
+      return
     }
 
     onSelect(cohortId)
-    await refreshCohorts()
+    router.refresh()
     toast.success('Cohortă activă schimbată')
   }
 
   return (
     <div className="flex items-center gap-2">
-      <Select value={selectedCohortId} onValueChange={setActiveCohort}>
+      <Select value={selectedCohortId} onValueChange={handleSetActiveCohort}>
         <SelectTrigger className="w-[200px]">
           <SelectValue placeholder="Selectează cohorta" />
         </SelectTrigger>

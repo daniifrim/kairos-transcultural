@@ -56,7 +56,7 @@ export function Navbar() {
           <div className="flex-shrink-0">
             <button
               onClick={() => scrollToSection('#hero')}
-              className="text-xl font-bold text-gray-900 hover:text-orange-600 transition-colors"
+              className="text-xl font-bold text-foreground hover:text-primary transition-colors"
             >
               Kairos 2026
             </button>
@@ -70,8 +70,8 @@ export function Navbar() {
                 onClick={() => scrollToSection(item.href)}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isScrolled
-                    ? 'text-gray-700 hover:text-orange-600 hover:bg-orange-50'
-                    : 'text-white hover:text-orange-300 hover:bg-white/10'
+                    ? 'text-foreground hover:text-primary hover:bg-primary/10'
+                    : 'text-white hover:text-primary-foreground hover:bg-white/10'
                 }`}
               >
                 {item.name}
@@ -85,7 +85,7 @@ export function Navbar() {
               variant="ghost"
               size="icon"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-gray-900"
+              className="text-foreground"
             >
               {isMobileMenuOpen ? (
                 <X className="w-6 h-6" />
@@ -99,13 +99,13 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+        <div className="md:hidden bg-white border-t border-border shadow-lg">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navItems.map((item) => (
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-colors"
+                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-primary hover:bg-primary/10 transition-colors"
               >
                 {item.name}
               </button>

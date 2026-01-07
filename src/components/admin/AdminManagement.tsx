@@ -4,7 +4,7 @@ import { Admin } from '@/types/database'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/client'
+import { updateAdminApproval } from '@/lib/actions'
 import { useRouter } from 'next/navigation'
 import { Check, X } from 'lucide-react'
 import { toast } from 'sonner'
@@ -18,9 +18,13 @@ export function AdminManagement({ admins, currentAdminId }: AdminManagementProps
   const router = useRouter()
 
   const updateApproval = async (adminId: string, isApproved: boolean) => {
-    const supabase = createClient()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase.from('admins') as any).update({ is_approved: isApproved }).eq('id', adminId)
+    const result = await updateAdminApproval(adminId, isApproved)
+
+    if (!result.success) {
+      toast.error('Eroare la actualizarea permisiunilor')
+      return
+    }
+
     toast.success(isApproved ? 'Administrator aprobat' : 'Acces revocat')
     router.refresh()
   }
@@ -29,7 +33,7 @@ export function AdminManagement({ admins, currentAdminId }: AdminManagementProps
     <div className="bg-white rounded-lg shadow">
       <div className="p-4 border-b">
         <h3 className="font-semibold">Gestionare Administratori</h3>
-        <p className="text-sm text-gray-500">Aprobă sau revocă accesul administratorilor</p>
+        <p className="text-sm text-muted-foreground">Aprobă sau revocă accesul administratorilor</p>
       </div>
 
       <Table>
@@ -57,10 +61,10 @@ export function AdminManagement({ admins, currentAdminId }: AdminManagementProps
                 {admin.is_main_admin ? (
                   <Badge variant="secondary" className="bg-purple-100 text-purple-800">Admin Principal</Badge>
                 ) : (
-                  <span className="text-gray-500">Administrator</span>
+                  <span className="text-muted-foreground">Administrator</span>
                 )}
               </TableCell>
-              <TableCell className="text-gray-500">
+              <TableCell className="text-muted-foreground">
                 {new Date(admin.created_at).toLocaleDateString('ro-RO')}
               </TableCell>
               <TableCell>

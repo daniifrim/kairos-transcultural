@@ -63,7 +63,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Creează Cont Admin</CardTitle>
@@ -112,12 +112,12 @@ export default function SignupPage() {
             </Button>
           </form>
 
-          <p className="text-sm text-gray-500 text-center mt-4">
+          <p className="text-sm text-muted-foreground text-center mt-4">
             Contul va necesita aprobarea administratorului principal.
           </p>
           
           <div className="text-center mt-4">
-            <a href="/login" className="text-sm text-blue-600 hover:underline">
+            <a href="/login" className="text-sm text-primary hover:underline">
               Ai deja cont? Conectează-te
             </a>
           </div>

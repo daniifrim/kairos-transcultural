@@ -21,13 +21,16 @@ const details = [
 
 export function PracticalDetails() {
   return (
-    <section id="details" className="py-16 px-4 bg-gray-50">
+    <section id="details" className="py-16 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-2">
+            Logistică
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
             Detalii Practice
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Toate informațiile importante despre costuri, program și pregătire
           </p>
         </div>
@@ -37,15 +40,17 @@ export function PracticalDetails() {
           {details.map((detail) => (
             <div
               key={detail.title}
-              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+              className="p-6 rounded-xl shadow-sm border border-border/60 bg-muted/50"
             >
-              <div className="p-3 rounded-lg bg-primary/10 w-fit mb-4">
-                <detail.icon className="w-6 h-6 text-primary" />
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-3 rounded-lg bg-primary/10">
+                  <detail.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground">
+                  {detail.title}
+                </h3>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900">
-                {detail.title}
-              </h3>
-              <p className="text-gray-600">{detail.description}</p>
+              <p className="text-muted-foreground">{detail.description}</p>
             </div>
           ))}
         </div>
