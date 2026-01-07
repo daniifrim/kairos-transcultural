@@ -30,8 +30,6 @@ interface CohortSelectorProps {
 }
 
 export function CohortSelector({ cohorts, selectedCohortId, onSelect, onCohortsChange, isMainAdmin }: CohortSelectorProps) {
-  const router = useRouter()
-
   const refreshCohorts = async () => {
     const supabase = createClient()
     const { data } = await supabase
