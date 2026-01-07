@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminDashboard } from '@/components/admin/AdminDashboard'
-import { Admin, Cohort, Participant } from '@/types/database'
+import { Admin, Cohort, Participant, Database } from '@/types/database'
 import { createClient } from '@/lib/supabase/client'
 import { Loader2 } from 'lucide-react'
 
@@ -33,23 +33,23 @@ export default function AdminPage() {
           .from('admins')
           .select('*')
           .eq('email', user.email)
-          .single()
+          .single<Admin>()
 
-        if (!adminData?.is_approved) {
+        if (!adminData || !adminData.is_approved) {
           router.push('/pending-approval')
           return
         }
 
-        setAdmin(adminData as Admin)
+        setAdmin(adminData)
 
         // Get active cohort
         const { data: activeCohortData } = await supabase
           .from('cohorts')
           .select('*')
           .eq('is_active', true)
-          .single()
+          .single<Cohort>()
 
-        setActiveCohort(activeCohortData as Cohort | null)
+        setActiveCohort(activeCohortData)
 
         // Get all cohorts
         const { data: cohortsData } = await supabase
