@@ -29,11 +29,27 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "Kairos Transcultural 2026",
+    title: "Kairos Transcultural 2026 | Uganda",
     description:
-      "Descoperă Misiunea lui Dumnezeu prin cursul Kairos și o experiență transculturală în Uganda.",
+      "Două săptămâni în care poți să descoperi Misiunea lui Dumnezeu pentru Biserica Sa prin cursul Kairos și o experiență transculturală în triburile din Uganda.",
     type: "website",
     locale: "ro_RO",
+    images: [
+      {
+        url: '/images/hero-boat.jpg',
+        width: 1920,
+        height: 1080,
+        alt: 'Kairos Transcultural 2026 - Uganda Mission',
+      },
+    ],
+    siteName: "Kairos Transcultural",
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Kairos Transcultural 2026 | Uganda",
+    description:
+      "Două săptămâni în care poți să descoperi Misiunea lui Dumnezeu pentru Biserica Sa prin cursul Kairos și o experiență transculturală în triburile din Uganda.",
+    images: ['/images/hero-boat.jpg'],
   },
 }
 
