@@ -58,7 +58,7 @@ Response format: Just the ID or "NO_MATCH", nothing else.`
         'X-Title': 'Kairos Transcultural',
       },
       body: JSON.stringify({
-        model: 'z-ai/glm-4.7',
+        model: 'google/gemini-2.0-flash-001',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 100,
         temperature: 0,
@@ -95,10 +95,6 @@ function extractFieldValue(fields: TallyField[], label: string): string {
 
 export async function POST(request: Request) {
   try {
-    // Debug: Log Supabase connection
-    console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL?.slice(0, 30) + '...')
-    console.log('Service Role Key exists:', !!process.env.SUPABASE_SERVICE_ROLE_KEY)
-
     const payload: TallyWebhookPayload = await request.json()
     const { fields } = payload.data
 
@@ -120,17 +116,15 @@ export async function POST(request: Request) {
     }
 
     // Get active cohort
-    const { data: activeCohort, error: cohortError } = await supabase
+    const { data: activeCohort } = await supabase
       .from('cohorts')
       .select('id')
       .eq('is_active', true)
       .single()
 
-    console.log('Cohort query result:', { activeCohort, error: cohortError?.message })
-
     if (!activeCohort) {
-      console.error('No active cohort found', cohortError)
-      return NextResponse.json({ error: 'No active cohort', details: cohortError?.message }, { status: 400 })
+      console.error('No active cohort found')
+      return NextResponse.json({ error: 'No active cohort' }, { status: 400 })
     }
 
     // Get all participants from active cohort who haven't completed the form
